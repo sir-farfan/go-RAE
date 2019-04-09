@@ -34,7 +34,7 @@ echo $response
 >
 */
 
-package main
+package gorae
 
 import (
 	"encoding/json"
@@ -49,29 +49,14 @@ import (
 	"golang.org/x/net/html"
 )
 
-// Rae object to access the REST api
-type rae struct {
-	apiHTTP    string
-	authHeader string
-	client     *http.Client
-	req        *http.Request
-}
 
-// RaeFunc Specify which function to use from the RAE API
-type RaeFunc int8
 
-const (
-	nothing RaeFunc = iota
-	wordDay
-	searchword
-	fetchDefByID
-	words
-)
+
 
 // NewRae initialize a object to call the RESTful API
 func NewRae(fun RaeFunc, key string) (r rae) {
-	r.apiHTTP = "https://dle.rae.es/data/"
-	r.authHeader = "Basic cDY4MkpnaFMzOmFHZlVkQ2lFNDM0"
+	r.apiHTTP = RAE_REST_API
+	r.authHeader = RAE_REST_Auth_Header
 
 	var remoteFunction string
 	switch fun {
@@ -127,7 +112,7 @@ type raeSearchResult struct {
 }
 
 // wordOfTheDay @return id of today's word
-func wordOfTheDay() (key string) {
+func WordOfTheDay() (key string) {
 	fmt.Println("word of the day")
 	r := NewRae(wordDay, "")
 
@@ -237,7 +222,7 @@ func removeHTMLTags(ht string) (text string) {
 	return
 }
 
-func fetchDefinition(key string) (definition string) {
+func FetchDefinition(key string) (definition string) {
 	fmt.Println("fetch definition of " + key)
 
 	r := NewRae(fetchDefByID, key)
@@ -269,7 +254,7 @@ func searchExactWord(word string) (definition string) {
 	return res.Res[0].Id
 }
 
-func searchWords(word string) (res raeSearchResult, opts tgb.InlineKeyboardMarkup) {
+func SearchWords(word string) (res raeSearchResult, opts tgb.InlineKeyboardMarkup) {
 	r := NewRae(words, word)
 
 	resp, _ := r.client.Do(r.req)
