@@ -49,14 +49,10 @@ import (
 	"golang.org/x/net/html"
 )
 
-
-
-
-
 // NewRae initialize a object to call the RESTful API
 func NewRae(fun RaeFunc, key string) (r rae) {
-	r.apiHTTP = RAE_REST_API
-	r.authHeader = RAE_REST_Auth_Header
+	r.apiHTTP = raeRestAPI
+	r.authHeader = raeRestAuthHeader
 
 	var remoteFunction string
 	switch fun {
@@ -84,33 +80,6 @@ func NewRae(fun RaeFunc, key string) (r rae) {
 	return
 }
 
-func getJSONFromBody(r *http.Response) (jsonstr string) {
-	var begin int
-
-	data, _ := ioutil.ReadAll(r.Body)
-	text := string(data)
-	fmt.Println(text)
-
-	if strings.Index(text, "json(") >= 0 {
-		begin = 5
-	} else {
-		log.Fatal("not a json string: ", text)
-	}
-
-	jsonstr = text[begin : len(text)-1]
-
-	return
-}
-
-type raeWord struct {
-	Header, Id string
-}
-
-type raeSearchResult struct {
-	Approx int
-	Res    []raeWord
-}
-
 // wordOfTheDay @return id of today's word
 func WordOfTheDay() (key string) {
 	fmt.Println("word of the day")
@@ -121,7 +90,7 @@ func WordOfTheDay() (key string) {
 	fmt.Println("got:" + jsonstr)
 
 	dec := json.NewDecoder(strings.NewReader(jsonstr))
-	var w raeWord
+	var w RaeWord
 
 	//json.Unmarshal([]byte(jsonstr), &w)
 
@@ -132,10 +101,10 @@ func WordOfTheDay() (key string) {
 	}
 
 	fmt.Println("palabra del dia: ")
-	fmt.Println(w.Header)
-	fmt.Println(w.Id)
+	fmt.Println(w.Word)
+	fmt.Println(w.ID)
 
-	return w.Id
+	return w.ID
 }
 
 // <p class="k5" id="EmYUHVi"><u>actividad</u> específica</p> comienza definición compuesta
@@ -236,7 +205,7 @@ func FetchDefinition(key string) (definition string) {
 
 // return ID of exact word
 func searchExactWord(word string) (definition string) {
-	var res raeSearchResult
+	var res RaeSearchResult
 	r := NewRae(searchword, word)
 
 	resp, _ := r.client.Do(r.req)
@@ -251,10 +220,10 @@ func searchExactWord(word string) (definition string) {
 	if len(res.Res) == 0 {
 		return ""
 	}
-	return res.Res[0].Id
+	return res.Res[0].ID
 }
 
-func SearchWords(word string) (res raeSearchResult, opts tgb.InlineKeyboardMarkup) {
+func SearchWords(word string) (res RaeSearchResult, opts tgb.InlineKeyboardMarkup) {
 	r := NewRae(words, word)
 
 	resp, _ := r.client.Do(r.req)
@@ -272,8 +241,8 @@ func SearchWords(word string) (res raeSearchResult, opts tgb.InlineKeyboardMarku
 				break
 			}
 			pa := tgb.InlineKeyboardButton{}
-			pa.Text = replacer.Replace(palabra.Header)
-			pa.CallbackData = &res.Res[k].Id
+			pa.Text = replacer.Replace(palabra.Word)
+			pa.CallbackData = &res.Res[k].ID
 			rows = append(rows, pa)
 		}
 		fmt.Println(rows)

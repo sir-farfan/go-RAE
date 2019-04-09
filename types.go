@@ -1,4 +1,3 @@
-
 package gorae
 
 import (
@@ -13,6 +12,16 @@ type rae struct {
 	req        *http.Request
 }
 
+// RaeWord actual word, unique definition ID
+type RaeWord struct {
+	Word, ID string
+}
+
+// RaeSearchResult array of words matching the search criteria
+type RaeSearchResult struct {
+	Approx int
+	Res    []RaeWord
+}
 
 // RaeFunc Specify which function to use from the RAE API
 type RaeFunc int8
@@ -25,5 +34,5 @@ const (
 	words
 )
 
-const RAE_REST_API = "https://dle.rae.es/data/"
-const RAE_REST_Auth_Header = "Basic cDY4MkpnaFMzOmFHZlVkQ2lFNDM0"
+const raeRestAPI = "https://dle.rae.es/data/"
+const raeRestAuthHeader = "Basic cDY4MkpnaFMzOmFHZlVkQ2lFNDM0"
