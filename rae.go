@@ -48,8 +48,8 @@ import (
 	tgb "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-// NewRae initialize a object to call the RESTful API
-func NewRae(fun RaeFunc, key string) (r rae) {
+// newRae initialize a object to call the RESTful API
+func newRae(fun RaeFunc, key string) (r rae) {
 	r.apiHTTP = raeRestAPI
 	r.authHeader = raeRestAuthHeader
 
@@ -72,44 +72,40 @@ func NewRae(fun RaeFunc, key string) (r rae) {
 	//req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.req.Header.Add("Authorization", r.authHeader)
 
-	fmt.Println(r.apiHTTP + remoteFunction)
+	//fmt.Println(r.apiHTTP + remoteFunction)
 
 	r.client = &http.Client{}
 
 	return
 }
 
-// wordOfTheDay @return id of today's word
-func WordOfTheDay() (key string) {
+//WordOfTheDay ID of today's word
+func WordOfTheDay() (word RaeWord) {
 	fmt.Println("word of the day")
-	r := NewRae(wordDay, "")
+	r := newRae(wordDay, "")
 
 	resp, _ := r.client.Do(r.req)
 	jsonstr := getJSONFromBody(resp)
 	fmt.Println("got:" + jsonstr)
 
 	dec := json.NewDecoder(strings.NewReader(jsonstr))
-	var w RaeWord
 
 	//json.Unmarshal([]byte(jsonstr), &w)
 
-	if err := dec.Decode(&w); err == io.EOF {
-		return ""
+	if err := dec.Decode(&word); err == io.EOF {
+		return RaeWord{"", ""}
 	} else if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("palabra del dia: ")
-	fmt.Println(w.Word)
-	fmt.Println(w.ID)
-
-	return w.ID
+	return word
 }
 
-func FetchDefinition(key string) (definition string) {
-	fmt.Println("fetch definition of " + key)
+//FetchDefinition from the word's ID, get the definition
+func FetchDefinition(ID string) (definition string) {
+	fmt.Println("fetch definition of " + ID)
 
-	r := NewRae(fetchDefByID, key)
+	r := newRae(fetchDefByID, ID)
 
 	resp, _ := r.client.Do(r.req)
 	data, _ := ioutil.ReadAll(resp.Body)
@@ -121,7 +117,7 @@ func FetchDefinition(key string) (definition string) {
 // return ID of exact word
 func searchExactWord(word string) (definition string) {
 	var res RaeSearchResult
-	r := NewRae(searchword, word)
+	r := newRae(searchword, word)
 
 	resp, _ := r.client.Do(r.req)
 	data, _ := ioutil.ReadAll(resp.Body)
@@ -138,8 +134,9 @@ func searchExactWord(word string) (definition string) {
 	return res.Res[0].ID
 }
 
+//SearchWords get words similar to "word"'s
 func SearchWords(word string) (res RaeSearchResult, opts tgb.InlineKeyboardMarkup) {
-	r := NewRae(words, word)
+	r := newRae(words, word)
 
 	resp, _ := r.client.Do(r.req)
 	data, _ := ioutil.ReadAll(resp.Body)
@@ -156,7 +153,7 @@ func SearchWords(word string) (res RaeSearchResult, opts tgb.InlineKeyboardMarku
 				break
 			}
 			pa := tgb.InlineKeyboardButton{}
-			pa.Text = replacer.Replace(palabra.Word)
+			pa.Text = replacer.Replace(palabra.Header)
 			pa.CallbackData = &res.Res[k].ID
 			rows = append(rows, pa)
 		}
