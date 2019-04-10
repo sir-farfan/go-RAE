@@ -27,3 +27,53 @@ func TestWordOfTheDay(t *testing.T) {
 	}
 
 }
+
+func TestSingleResultApproximateWord(t *testing.T) {
+	words, _ := SearchWords("enfasi")
+	gotTheWord := false
+
+	if len(words.Res) != 1 {
+		t.Error("Didn't get the single word back from the RAE")
+		return
+	}
+
+	if words.Res[0].Header == "énfasis." {
+		gotTheWord = true
+	}
+
+	if !gotTheWord {
+		t.Error("Didn't the the word 'énfasis.' back from the RAE")
+	}
+
+}
+
+func TestMultipleResultApproximateWord(t *testing.T) {
+	words, _ := SearchWords("a") // This returs 4 results
+
+	if len(words.Res) < 3 {
+		t.Errorf("'a' only returned %d words", len(words.Res))
+	}
+}
+
+func TestFailedApproximateWordSearch(t *testing.T) {
+	words, _ := SearchWords("aoeui")
+	if len(words.Res) != 0 {
+		t.Error("Searching 'aoeui' shouldn't return any word o_O")
+	}
+}
+
+func TestExactWordSearchFail(t *testing.T) {
+	words := searchExactWord("enfasis") // accent
+
+	if len(words.Res) != 0 {
+		t.Errorf("'enfasis' returned %d words", len(words.Res))
+	}
+}
+
+func TestExactWordSearch(t *testing.T) {
+	words := searchExactWord("énfasis")
+
+	if len(words.Res) == 0 {
+		t.Errorf("'énfasis' returned %d words", len(words.Res))
+	}
+}

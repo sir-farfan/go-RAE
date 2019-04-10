@@ -115,8 +115,7 @@ func FetchDefinition(ID string) (definition string) {
 }
 
 // return ID of exact word
-func searchExactWord(word string) (definition string) {
-	var res RaeSearchResult
+func searchExactWord(word string) (res RaeSearchResult) {
 	r := newRae(searchword, word)
 
 	resp, _ := r.client.Do(r.req)
@@ -128,10 +127,7 @@ func searchExactWord(word string) (definition string) {
 	fmt.Println(jsonstr)
 	fmt.Println(res)
 
-	if len(res.Res) == 0 {
-		return ""
-	}
-	return res.Res[0].ID
+	return
 }
 
 //SearchWords get words similar to "word"'s
