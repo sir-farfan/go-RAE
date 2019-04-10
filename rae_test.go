@@ -2,6 +2,7 @@ package gorae
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -76,4 +77,16 @@ func TestExactWordSearch(t *testing.T) {
 	if len(words.Res) == 0 {
 		t.Errorf("'énfasis' returned %d words", len(words.Res))
 	}
+}
+
+func TestFetchDefinition(t *testing.T) {
+	wotd := WordOfTheDay()
+	definition := FetchDefinition(wotd.ID)
+
+	// HTML with a bunch of "class" attributes is returned
+	count := strings.Count(definition, "class")
+	if count < 4 {
+		t.Error("didn't seem to get a definition for " + wotd.ID)
+	}
+
 }

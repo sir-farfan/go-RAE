@@ -111,7 +111,7 @@ func FetchDefinition(ID string) (definition string) {
 	data, _ := ioutil.ReadAll(resp.Body)
 	definition = string(data)
 
-	return htmlToText(definition)
+	return definition
 }
 
 // return ID of exact word

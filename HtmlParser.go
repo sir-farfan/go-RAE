@@ -52,7 +52,8 @@ func parseHeader(z *html.Tokenizer) (definicion string) {
 	return
 }
 
-func htmlToText(ht string) (text string) {
+//HtmlToText Remove the HTML tags and formats in plain text
+func HtmlToText(ht string) (text string) {
 	tokenizer := html.NewTokenizer(strings.NewReader(ht))
 	for {
 		tt := tokenizer.Next()
@@ -81,10 +82,6 @@ func htmlToText(ht string) (text string) {
 				} // for attr
 			}
 		}
-	}
-
-	if len(text) > 2000 {
-		text = text[0:2000] + "... cortado"
 	}
 
 	return
