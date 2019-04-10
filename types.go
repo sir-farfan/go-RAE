@@ -14,7 +14,8 @@ type rae struct {
 
 // RaeWord actual word, unique definition ID
 type RaeWord struct {
-	Word, ID string
+	Header string // actual word
+	ID     string // key to the definition
 }
 
 // RaeSearchResult array of words matching the search criteria
@@ -27,11 +28,11 @@ type RaeSearchResult struct {
 type RaeFunc int8
 
 const (
-	nothing RaeFunc = iota
-	wordDay
-	searchword
-	fetchDefByID
-	words
+	nothing      RaeFunc = iota
+	wordDay              // Word of the Day
+	searchword           // Exact word search
+	fetchDefByID         // Get the definition
+	words                // Aproximate search (default on rae.es site)
 )
 
 const raeRestAPI = "https://dle.rae.es/data/"
