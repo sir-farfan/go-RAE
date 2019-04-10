@@ -1,0 +1,6 @@
+In order for the comparison to work, the editor must be prevented from adding
+the end of line byte 0x0a.
+
+In vim this can be done adding to .vimrc
+set noeol
+set nofixendofline
