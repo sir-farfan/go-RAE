@@ -44,8 +44,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-
-	tgb "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 // newRae initialize a object to call the RESTful API
@@ -131,7 +129,7 @@ func searchExactWord(word string) (res RaeSearchResult) {
 }
 
 //SearchWords get words similar to "word"'s
-func SearchWords(word string) (res RaeSearchResult, opts tgb.InlineKeyboardMarkup) {
+func SearchWords(word string) (res RaeSearchResult) {
 	r := newRae(words, word)
 
 	resp, _ := r.client.Do(r.req)
@@ -140,22 +138,6 @@ func SearchWords(word string) (res RaeSearchResult, opts tgb.InlineKeyboardMarku
 
 	fmt.Println("json de searchwords", jsonstr)
 	json.Unmarshal([]byte(jsonstr), &res)
-
-	if len(res.Res) > 1 {
-		replacer := strings.NewReplacer("<sup>", "", "</sup>", "")
-		var rows []tgb.InlineKeyboardButton
-		for k, palabra := range res.Res {
-			if k > 3 {
-				break
-			}
-			pa := tgb.InlineKeyboardButton{}
-			pa.Text = replacer.Replace(palabra.Header)
-			pa.CallbackData = &res.Res[k].ID
-			rows = append(rows, pa)
-		}
-		fmt.Println(rows)
-		opts = tgb.NewInlineKeyboardMarkup(tgb.NewInlineKeyboardRow(rows...))
-	}
 
 	return
 }

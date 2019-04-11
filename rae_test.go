@@ -30,7 +30,7 @@ func TestWordOfTheDay(t *testing.T) {
 }
 
 func TestSingleResultApproximateWord(t *testing.T) {
-	words, _ := SearchWords("enfasi")
+	words := SearchWords("enfasi")
 	gotTheWord := false
 
 	if len(words.Res) != 1 {
@@ -49,7 +49,7 @@ func TestSingleResultApproximateWord(t *testing.T) {
 }
 
 func TestMultipleResultApproximateWord(t *testing.T) {
-	words, _ := SearchWords("a") // This returs 4 results
+	words := SearchWords("a") // This returs 4 results
 
 	if len(words.Res) < 3 {
 		t.Errorf("'a' only returned %d words", len(words.Res))
@@ -57,7 +57,7 @@ func TestMultipleResultApproximateWord(t *testing.T) {
 }
 
 func TestFailedApproximateWordSearch(t *testing.T) {
-	words, _ := SearchWords("aoeui")
+	words := SearchWords("aoeui")
 	if len(words.Res) != 0 {
 		t.Error("Searching 'aoeui' shouldn't return any word o_O")
 	}
