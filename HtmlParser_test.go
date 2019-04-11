@@ -4,7 +4,10 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io/ioutil"
+	"strings"
 	"testing"
+
+	"golang.org/x/net/html"
 )
 
 func genericHtmlToText(filename string, t *testing.T) bool {
@@ -49,4 +52,15 @@ func TestHtmlToText(t *testing.T) {
 		t.Error("The complex HTML to Text test failed")
 	}
 
+}
+
+func TestParseHeader(t *testing.T) {
+	HTMLheader := `<header class="f">el, la</header>`
+	tokenizer := html.NewTokenizer(strings.NewReader(HTMLheader))
+	tokenizer.Next()
+
+	header := parseHeader(tokenizer)
+	if header != "*el, la*" {
+		t.Error("Header doesn't match: " + header)
+	}
 }
